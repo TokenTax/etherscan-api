@@ -1,5 +1,5 @@
-module github.com/nanmu42/etherscan-api
+module github.com/timcki/etherscan-api
 
-go 1.13
+go 1.18
 
 require github.com/google/go-cmp v0.5.7
