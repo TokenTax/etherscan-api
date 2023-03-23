@@ -13,7 +13,6 @@ import (
 	"math/big"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // Envelope is the carrier of nearly every response
@@ -85,7 +84,7 @@ type ERC20Transfer struct {
 	Value             *big.Int `json:"value"`
 	TokenName         string   `json:"tokenName"`
 	TokenSymbol       string   `json:"tokenSymbol"`
-	TokenDecimal      uint8    `json:"tokenDecimal,string"`
+	TokenDecimal      int      `json:"tokenDecimal,string"`
 	TransactionIndex  int      `json:"transactionIndex,string"`
 	Gas               int      `json:"gas,string"`
 	GasPrice          *big.Int `json:"gasPrice"`
@@ -108,7 +107,7 @@ type ERC721Transfer struct {
 	TokenID           *big.Int `json:"tokenID"`
 	TokenName         string   `json:"tokenName"`
 	TokenSymbol       string   `json:"tokenSymbol"`
-	TokenDecimal      uint8    `json:"tokenDecimal,string"`
+	TokenDecimal      int      `json:"tokenDecimal,string"`
 	TransactionIndex  int      `json:"transactionIndex,string"`
 	Gas               int      `json:"gas,string"`
 	GasPrice          *big.Int `json:"gasPrice"`
