@@ -35,7 +35,7 @@ func TestClient_MultiAccountBalance(t *testing.T) {
 		if item.Account == "" {
 			t.Errorf("bound error on index %v", i)
 		}
-		if item.Balance.Int().Cmp(big.NewInt(0)) != 1 {
+		if item.Balance.Cmp(big.NewInt(0)) != 1 {
 			t.Errorf("rich man %s at index %v is no longer rich.", item.Account, i)
 		}
 	}

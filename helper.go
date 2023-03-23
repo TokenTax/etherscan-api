@@ -42,11 +42,10 @@ type M map[string]interface{}
 type BigInt big.Int
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (b *BigInt) UnmarshalText(text []byte) (err error) {
+func (b *BigInt) UnmarshalText(text []byte) error {
 	var bigInt = new(big.Int)
-	err = bigInt.UnmarshalText(text)
-	if err != nil {
-		return
+	if err := bigInt.UnmarshalText(text); err != nil {
+		return err
 	}
 
 	*b = BigInt(*bigInt)
@@ -54,7 +53,7 @@ func (b *BigInt) UnmarshalText(text []byte) (err error) {
 }
 
 // MarshalText implements the encoding.TextMarshaler
-func (b *BigInt) MarshalText() (text []byte, err error) {
+func (b *BigInt) MarshalText() ([]byte, error) {
 	return []byte(b.Int().String()), nil
 }
 
