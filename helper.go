@@ -44,6 +44,11 @@ type BigInt big.Int
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (b *BigInt) UnmarshalText(text []byte) error {
 	var bigInt = new(big.Int)
+	if string(text) == "" {
+		bigInt.SetInt64(0)
+		*b = BigInt(*bigInt)
+		return nil
+	}
 	if err := bigInt.UnmarshalText(text); err != nil {
 		return err
 	}
