@@ -5,14 +5,16 @@
  * You may find a license copy in project root.
  */
 
-package etherscan
+package client
 
 import (
 	"testing"
+
+	"github.com/timcki/etherscan-api/internal/types"
 )
 
 func TestClient_craftURL(t *testing.T) {
-	c := New(Ropsten, "abc123")
+	c := NewClient(types.Ropsten, "abc123")
 
 	const expected = `https://api-ropsten.etherscan.io/api?action=craftURL&apikey=abc123&four=d&four=e&four=f&module=testing&one=1&three=1&three=2&three=3&two=2`
 	output := c.craftURL("testing", "craftURL", M{

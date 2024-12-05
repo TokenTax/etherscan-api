@@ -5,7 +5,10 @@
  * You may find a license copy in project root.
  */
 
-package etherscan
+package network
+
+// Network is ethereum network type (mainnet, ropsten, etc)
+type Network string
 
 const (
 	//// Ethereum public networks
@@ -23,9 +26,6 @@ const (
 	// Tobalaba Testnet
 	Tobalaba Network = "api-tobalaba"
 )
-
-// Network is ethereum network type (mainnet, ropsten, etc)
-type Network string
 
 // SubDomain returns the subdomain of  etherscan API
 // via n provided.

@@ -5,7 +5,7 @@
  * You may find a license copy in project root.
  */
 
-package etherscan
+package client
 
 // GetLogs gets logs that match "topic" emitted by the specified "address" between the "fromBlock" and "toBlock"
 func (c *Client) GetLogs(fromBlock, toBlock int, address, topic string) (logs []Log, err error) {
