@@ -9,7 +9,6 @@ package client
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -28,6 +27,7 @@ type (
 		conn    *http.Client
 		key     string
 		baseURL string
+		chainID string
 
 		// Verbose when true, talks a lot
 		Verbose bool
@@ -94,6 +94,58 @@ func NewCustomized(config Customization) *Client {
 	}
 }
 
+func (c *Client) execute(module, action string, values url.Values) (bytes.Buffer, error) {
+	var content = bytes.Buffer{}
+
+	req, err := http.NewRequest(http.MethodGet, c.craftURL(module, action, values), http.NoBody)
+	if err != nil {
+		return content, errors.Wrap(err, "creating request")
+	}
+	req.Header.Set("User-Agent", "etherscan-api(Go)")
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+
+	if c.Verbose {
+		reqDump, err := httputil.DumpRequestOut(req, false)
+		if err != nil {
+			return content, errors.Wrap(err, "verbose mode: dumping request")
+		}
+
+		fmt.Printf("\n%s\n", reqDump)
+
+		defer func() {
+			if err != nil {
+				fmt.Printf("[Error] %v\n", err)
+			}
+		}()
+	}
+
+	res, err := c.conn.Do(req)
+	if err != nil {
+		return content, errors.Wrap(err, "sending request")
+	}
+	defer res.Body.Close()
+
+	if c.Verbose {
+		resDump, err := httputil.DumpResponse(res, true)
+		if err != nil {
+			return content, errors.Wrap(err, "verbose mode:dumping response")
+		}
+
+		fmt.Printf("%s\n", resDump)
+	}
+
+	if _, err = io.Copy(&content, res.Body); err != nil {
+		return content, errors.Wrap(err, "reading response")
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return content, errors.Errorf("got non-200 status code; status: %v, status text: %s, response body: %s", res.StatusCode, res.Status, content.String())
+	}
+
+	return content, nil
+}
+
+/*
 func (c *Client) innerCall(module, action string, values url.Values, outcome any) error {
 	req, err := http.NewRequest(http.MethodGet, c.craftURL(module, action, values), http.NoBody)
 	if err != nil {
@@ -131,6 +183,8 @@ func (c *Client) innerCall(module, action string, values url.Values, outcome any
 
 		fmt.Printf("%s\n", resDump)
 	}
+
+	resp := response.ReadResponse(res)
 
 	if res.StatusCode != http.StatusOK {
 		return errors.Errorf("got non-200 status code; status: %v, status text: %s, response body: %s", res.StatusCode, res.Status, content.String())
@@ -176,12 +230,14 @@ func (c *Client) call(module, action string, values url.Values, outcome interfac
 	}
 	return err
 }
+*/
 
 // craftURL returns desired URL via param provided
 func (c *Client) craftURL(module, action string, values url.Values) string {
 	values.Add("module", module)
 	values.Add("action", action)
 	values.Add("apikey", c.key)
+	values.Add("chainid", c.chainID)
 
 	return fmt.Sprintf("%s?%s", c.baseURL, values.Encode())
 }

@@ -11,8 +11,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"strconv"
 	"strings"
 
@@ -21,12 +19,20 @@ import (
 )
 
 type EtherscanResponse interface {
-	AccountBalance |
-		NormalTx | InternalTx |
-		ERC20Transfer | ERC721Transfer | ERC1155Transfer |
-		MinedBlock | ContractSource |
-		ExecutionStatus | BlockRewards |
-		LatestPrice | Log | GasPrices
+	AccountBalance | []AccountBalance |
+		NormalTx | []NormalTx |
+		InternalTx | []InternalTx |
+		ERC20Transfer | []ERC20Transfer |
+		ERC721Transfer | []ERC721Transfer |
+		ERC1155Transfer | []ERC1155Transfer |
+		MinedBlock | []MinedBlock |
+		ContractSource | []ContractSource |
+		ExecutionStatus | []ExecutionStatus |
+		BlockRewards | []BlockRewards |
+		LatestPrice | []LatestPrice |
+		Log | []Log |
+		GasPrices | []GasPrices |
+		types.BigInt | types.Time | string
 }
 
 // envelope is the carrier of nearly every response
@@ -39,12 +45,8 @@ type envelope[T EtherscanResponse] struct {
 	Result T `json:"result"`
 }
 
-func ReadResponse[T EtherscanResponse](resp *http.Response) (T, error) {
+func ReadResponse[T EtherscanResponse](content bytes.Buffer) (T, error) {
 	var ret T
-	var content bytes.Buffer
-	if _, err := io.Copy(&content, resp.Body); err != nil {
-		return ret, errors.Wrap(err, "reading response")
-	}
 
 	var envelope envelope[T]
 	if err := json.Unmarshal(content.Bytes(), &envelope); err != nil {

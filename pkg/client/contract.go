@@ -7,22 +7,47 @@
 
 package client
 
-// ContractABI gets contract abi for verified contract source codes
-func (c *Client) ContractABI(address string) (abi string, err error) {
-	param := M{
-		"address": address,
+import (
+	"net/url"
+
+	"github.com/pkg/errors"
+	"github.com/timcki/etherscan-api/pkg/response"
+)
+
+ type ContractParams struct {
+	Address string `json:"address"`
+ }
+
+ func (p ContractParams) GetUrlValues() url.Values {
+	values := url.Values{}
+	if p.Address != "" {
+		values.Add("address", p.Address)
+	}
+	return values
+ }
+
+ // ContractABI gets contract abi for verified contract source codes
+ func (c *Client) ContractABI(address string) (string, error) {
+	param := ContractParams{
+		Address: address,
 	}
 
-	err = c.call("contract", "getabi", param, &abi)
-	return
-}
+	body, err := c.execute("contract", "getabi", param.GetUrlValues())
+	if err != nil {
+		return "", errors.Wrap(err, "executing ContractABI request")
+	}
+	return response.ReadResponse[string](body)
+ }
 
-// ContractSource gets contract source code for verified contract source codes
-func (c *Client) ContractSource(address string) (source []ContractSource, err error) {
-	param := M{
-		"address": address,
+ // ContractSource gets contract source code for verified contract source codes
+ func (c *Client) ContractSource(address string) ([]response.ContractSource, error) {
+	param := ContractParams{
+		Address: address,
 	}
 
-	err = c.call("contract", "getsourcecode", param, &source)
-	return
-}
+	body, err := c.execute("contract", "getsourcecode", param.GetUrlValues())
+	if err != nil {
+		return nil, errors.Wrap(err, "executing ContractSource request")
+	}
+	return response.ReadResponse[[]response.ContractSource](body)
+ }

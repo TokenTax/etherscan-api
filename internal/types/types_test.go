@@ -5,12 +5,14 @@
  * You may find a license copy in project root.
  */
 
-package etherscan
+package types
 
 import (
 	"math/big"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBigInt(t *testing.T) {
@@ -19,6 +21,8 @@ func TestBigInt(t *testing.T) {
 
 	b := new(BigInt)
 	err := b.UnmarshalText([]byte(ansStr))
+
+	assert.E
 	noError(t, err, "BigInt.UnmarshalText")
 
 	if b.Int().Cmp(ans) != 0 {

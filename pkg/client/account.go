@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/timcki/etherscan-api/internal/types"
 	"github.com/timcki/etherscan-api/pkg/response"
 )
@@ -149,27 +150,31 @@ func (p TokenBalanceParams) GetUrlValues() url.Values {
 }
 
 // Refactored methods
-func (c *Client) AccountBalance(address string) (balance *types.BigInt, err error) {
+func (c *Client) AccountBalance(address string) (response.AccountBalance, error) {
 	param := AccountBalanceParams{
 		Tag:     "latest",
 		Address: address,
 	}
-	balance = new(types.BigInt)
-	err = c.call("account", "balance", param, balance)
-	return
+	body, err := c.execute("account", "balance", param.GetUrlValues())
+	if err != nil {
+		return response.AccountBalance{}, errors.Wrap(err, "executing AccountBalance request")
+	}
+	return response.ReadResponse[response.AccountBalance](body)
 }
 
-func (c *Client) MultiAccountBalance(addresses ...string) (balances []response.AccountBalance, err error) {
+func (c *Client) MultiAccountBalance(addresses ...string) ([]response.AccountBalance, error) {
 	param := MultiAccountBalanceParams{
 		Tag:       "latest",
 		Addresses: addresses,
 	}
-	//balances = make([]response.AccountBalance, 0, len(addresses))
-	err = c.call("account", "balancemulti", param, &balances)
-	return
+	body, err := c.execute("account", "balancemulti", param.GetUrlValues())
+	if err != nil {
+		return []response.AccountBalance{}, errors.Wrap(err, "executing MultiAccountBalance request")
+	}
+	return response.ReadResponse[[]response.AccountBalance](body)
 }
 
-func (c *Client) NormalTxByAddress(address string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []NormalTx, err error) {
+func (c *Client) NormalTxByAddress(address string, startBlock *int, endBlock *int, page int, offset int, desc bool) ([]response.NormalTx, error) {
 	param := TxListParams{
 		Address:    address,
 		StartBlock: startBlock,
@@ -181,11 +186,14 @@ func (c *Client) NormalTxByAddress(address string, startBlock *int, endBlock *in
 	if desc {
 		param.Sort = "desc"
 	}
-	err = c.call("account", "txlist", param, &txs)
-	return
+	body, err := c.execute("account", "txlist", param.GetUrlValues())
+	if err != nil {
+		return []response.NormalTx{}, errors.Wrap(err, "executing NormalTxByAddress request")
+	}
+	return response.ReadResponse[[]response.NormalTx](body)
 }
 
-func (c *Client) InternalTxByAddress(address string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []InternalTx, err error) {
+func (c *Client) InternalTxByAddress(address string, startBlock *int, endBlock *int, page int, offset int, desc bool) ([]response.InternalTx, error) {
 	param := TxListParams{
 		Address:    address,
 		StartBlock: startBlock,
@@ -197,11 +205,15 @@ func (c *Client) InternalTxByAddress(address string, startBlock *int, endBlock *
 	if desc {
 		param.Sort = "desc"
 	}
-	err = c.call("account", "txlistinternal", param, &txs)
-	return
+
+	body, err := c.execute("account", "txlistinternal", param.GetUrlValues())
+	if err != nil {
+		return []response.InternalTx{}, errors.Wrap(err, "executing InternalTxByAddress request")
+	}
+	return response.ReadResponse[[]response.InternalTx](body)
 }
 
-func (c *Client) ERC20Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []ERC20Transfer, err error) {
+func (c *Client) ERC20Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) ([]response.ERC20Transfer, error) {
 	param := TokenTransferParams{
 		ContractAddress: contractAddress,
 		Address:         address,
@@ -214,11 +226,14 @@ func (c *Client) ERC20Transfers(contractAddress, address *string, startBlock *in
 	if desc {
 		param.Sort = "desc"
 	}
-	err = c.call("account", "tokentx", param, &txs)
-	return
+	body, err := c.execute("account", "tokentx", param.GetUrlValues())
+	if err != nil {
+		return []response.ERC20Transfer{}, errors.Wrap(err, "executing ERC20Transfers request")
+	}
+	return response.ReadResponse[[]response.ERC20Transfer](body)
 }
 
-func (c *Client) ERC721Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []ERC721Transfer, err error) {
+func (c *Client) ERC721Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) ([]response.ERC721Transfer, error) {
 	param := TokenTransferParams{
 		ContractAddress: contractAddress,
 		Address:         address,
@@ -231,11 +246,14 @@ func (c *Client) ERC721Transfers(contractAddress, address *string, startBlock *i
 	if desc {
 		param.Sort = "desc"
 	}
-	err = c.call("account", "tokennfttx", param, &txs)
-	return
+	body, err := c.execute("account", "tokennfttx", param.GetUrlValues())
+	if err != nil {
+		return []response.ERC721Transfer{}, errors.Wrap(err, "executing ERC721Transfers request")
+	}
+	return response.ReadResponse[[]response.ERC721Transfer](body)
 }
 
-func (c *Client) ERC1155Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []ERC1155Transfer, err error) {
+func (c *Client) ERC1155Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) ([]response.ERC1155Transfer, error) {
 	param := TokenTransferParams{
 		ContractAddress: contractAddress,
 		Address:         address,
@@ -248,38 +266,50 @@ func (c *Client) ERC1155Transfers(contractAddress, address *string, startBlock *
 	if desc {
 		param.Sort = "desc"
 	}
-	err = c.call("account", "token1155tx", param, &txs)
-	return
+	body, err := c.execute("account", "token1155tx", param.GetUrlValues())
+	if err != nil {
+		return []response.ERC1155Transfer{}, errors.Wrap(err, "executing ERC1155Transfers request")
+	}
+	return response.ReadResponse[[]response.ERC1155Transfer](body)
 }
 
-func (c *Client) BlocksMinedByAddress(address string, page int, offset int) (mined []MinedBlock, err error) {
+func (c *Client) BlocksMinedByAddress(address string, page int, offset int) ([]response.MinedBlock, error) {
 	param := MinedBlockParams{
 		Address:   address,
 		BlockType: "blocks",
 		Page:      page,
 		Offset:    offset,
 	}
-	err = c.call("account", "getminedblocks", param, &mined)
-	return
+	body, err := c.execute("account", "getminedblocks", param.GetUrlValues())
+	if err != nil {
+		return []response.MinedBlock{}, errors.Wrap(err, "executing BlocksMinedByAddress request")
+	}
+	return response.ReadResponse[[]response.MinedBlock](body)
 }
 
-func (c *Client) UnclesMinedByAddress(address string, page int, offset int) (mined []MinedBlock, err error) {
+func (c *Client) UnclesMinedByAddress(address string, page int, offset int) ([]response.MinedBlock, error) {
 	param := MinedBlockParams{
 		Address:   address,
 		BlockType: "uncles",
 		Page:      page,
 		Offset:    offset,
 	}
-	err = c.call("account", "getminedblocks", param, &mined)
-	return
+	body, err := c.execute("account", "getminedblocks", param.GetUrlValues())
+	if err != nil {
+		return []response.MinedBlock{}, errors.Wrap(err, "executing UnclesMinedByAddress request")
+	}
+	return response.ReadResponse[[]response.MinedBlock](body)
 }
 
-func (c *Client) TokenBalance(contractAddress, address string) (balance *BigInt, err error) {
+func (c *Client) TokenBalance(contractAddress, address string) (types.BigInt, error) {
 	param := TokenBalanceParams{
 		ContractAddress: contractAddress,
 		Address:         address,
 		Tag:             "latest",
 	}
-	err = c.call("account", "tokenbalance", param, &balance)
-	return
+	body, err := c.execute("account", "tokenbalance", param.GetUrlValues())
+	if err != nil {
+		return types.BigInt{}, errors.Wrap(err, "executing TokenBalance request")
+	}
+	return response.ReadResponse[types.BigInt](body)
 }
