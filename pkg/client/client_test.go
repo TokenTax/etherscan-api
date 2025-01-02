@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/timcki/etherscan-api/pkg/chain"
+	"github.com/timcki/etherscan-api/v2/pkg/chain"
 )
 
 func TestClient_craftURL(t *testing.T) {

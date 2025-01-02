@@ -1,13 +1,17 @@
-package etherscan
+//go:build integration
+// +build integration
+
+package client
 
 import (
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
+	"github.com/timcki/etherscan-api/v2/pkg/response"
 )
 
 func TestClient_GetLogs(t *testing.T) {
-	expectedLogs := []Log{
+	expectedLogs := []response.Log{
 		{
 			Address:         "0x33990122638b9132ca29c723bdf037f1a891a70c",
 			Topics:          []string{"0xf63780e752c6a54a94fc52715dbc5518a3b4c3c2833d301a204226548a2a8545", "0x72657075746174696f6e00000000000000000000000000000000000000000000", "0x000000000000000000000000d9b2f59f3b5c7b3c67047d2f03c3e8052470be92"},
@@ -21,11 +25,7 @@ func TestClient_GetLogs(t *testing.T) {
 
 	actualLogs, err := api.GetLogs(379224, 379225, "0x33990122638b9132ca29c723bdf037f1a891a70c", "0xf63780e752c6a54a94fc52715dbc5518a3b4c3c2833d301a204226548a2a8545")
 
-	noError(t, err, "api.GetLogs")
+	assert.NoError(t, err, "api.GetLogs")
 
-	equal := cmp.Equal(expectedLogs, actualLogs)
-
-	if !equal {
-		t.Errorf("api.GetLogs not working\n: %s\n", cmp.Diff(expectedLogs, actualLogs))
-	}
+	assert.Equal(expectedLogs, actualLogs)
 }

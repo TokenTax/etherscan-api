@@ -13,33 +13,33 @@ import (
 	"strconv"
 
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/pkg/response"
+	"github.com/timcki/etherscan-api/v2/pkg/response"
 )
 
- type BlockRewardParams struct {
+type BlockRewardParams struct {
 	BlockNo int `json:"blockno"`
- }
+}
 
- type BlockNumberParams struct {
+type BlockNumberParams struct {
 	Timestamp int64  `json:"timestamp"`
 	Closest   string `json:"closest"`
- }
+}
 
- func (p BlockRewardParams) GetUrlValues() url.Values {
+func (p BlockRewardParams) GetUrlValues() url.Values {
 	values := url.Values{}
 	values.Add("blockno", strconv.Itoa(p.BlockNo))
 	return values
- }
+}
 
- func (p BlockNumberParams) GetUrlValues() url.Values {
+func (p BlockNumberParams) GetUrlValues() url.Values {
 	values := url.Values{}
 	values.Add("timestamp", strconv.FormatInt(p.Timestamp, 10))
 	values.Add("closest", p.Closest)
 	return values
- }
+}
 
- // BlockReward gets block and uncle rewards by block number
- func (c *Client) BlockReward(blockNum int) (response.BlockRewards, error) {
+// BlockReward gets block and uncle rewards by block number
+func (c *Client) BlockReward(blockNum int) (response.BlockRewards, error) {
 	param := BlockRewardParams{
 		BlockNo: blockNum,
 	}
@@ -49,12 +49,12 @@ import (
 		return response.BlockRewards{}, errors.Wrap(err, "executing BlockReward request")
 	}
 	return response.ReadResponse[response.BlockRewards](body)
- }
+}
 
- // BlockNumber gets the closest block number by UNIX timestamp
- //
- // valid closest option: before, after
- func (c *Client) BlockNumber(timestamp int64, closest string) (int, error) {
+// BlockNumber gets the closest block number by UNIX timestamp
+//
+// valid closest option: before, after
+func (c *Client) BlockNumber(timestamp int64, closest string) (int, error) {
 	param := BlockNumberParams{
 		Timestamp: timestamp,
 		Closest:   closest,
@@ -76,4 +76,4 @@ import (
 	}
 
 	return blockNumber, nil
- }
+}

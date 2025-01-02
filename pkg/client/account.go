@@ -8,13 +8,14 @@
 package client
 
 import (
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/internal/types"
-	"github.com/timcki/etherscan-api/pkg/response"
+	"github.com/timcki/etherscan-api/v2/internal/types"
+	"github.com/timcki/etherscan-api/v2/pkg/response"
 )
 
 type AccountBalanceParams struct {
@@ -150,16 +151,17 @@ func (p TokenBalanceParams) GetUrlValues() url.Values {
 }
 
 // Refactored methods
-func (c *Client) AccountBalance(address string) (response.AccountBalance, error) {
+func (c *Client) AccountBalance(address string) (types.BigInt, error) {
 	param := AccountBalanceParams{
 		Tag:     "latest",
 		Address: address,
 	}
 	body, err := c.execute("account", "balance", param.GetUrlValues())
 	if err != nil {
-		return response.AccountBalance{}, errors.Wrap(err, "executing AccountBalance request")
+		return types.BigInt{}, errors.Wrap(err, "executing AccountBalance request")
 	}
-	return response.ReadResponse[response.AccountBalance](body)
+	fmt.Printf("%s\n", body.Bytes())
+	return response.ReadResponse[types.BigInt](body)
 }
 
 func (c *Client) MultiAccountBalance(addresses ...string) ([]response.AccountBalance, error) {

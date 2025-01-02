@@ -11,23 +11,23 @@ import (
 	"net/url"
 
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/pkg/response"
+	"github.com/timcki/etherscan-api/v2/pkg/response"
 )
 
- type ContractParams struct {
+type ContractParams struct {
 	Address string `json:"address"`
- }
+}
 
- func (p ContractParams) GetUrlValues() url.Values {
+func (p ContractParams) GetUrlValues() url.Values {
 	values := url.Values{}
 	if p.Address != "" {
 		values.Add("address", p.Address)
 	}
 	return values
- }
+}
 
- // ContractABI gets contract abi for verified contract source codes
- func (c *Client) ContractABI(address string) (string, error) {
+// ContractABI gets contract abi for verified contract source codes
+func (c *Client) ContractABI(address string) (string, error) {
 	param := ContractParams{
 		Address: address,
 	}
@@ -37,10 +37,10 @@ import (
 		return "", errors.Wrap(err, "executing ContractABI request")
 	}
 	return response.ReadResponse[string](body)
- }
+}
 
- // ContractSource gets contract source code for verified contract source codes
- func (c *Client) ContractSource(address string) ([]response.ContractSource, error) {
+// ContractSource gets contract source code for verified contract source codes
+func (c *Client) ContractSource(address string) ([]response.ContractSource, error) {
 	param := ContractParams{
 		Address: address,
 	}
@@ -50,4 +50,4 @@ import (
 		return nil, errors.Wrap(err, "executing ContractSource request")
 	}
 	return response.ReadResponse[[]response.ContractSource](body)
- }
+}

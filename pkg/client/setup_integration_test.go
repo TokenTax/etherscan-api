@@ -1,3 +1,6 @@
+//go:build integration
+// +build integration
+
 /*
  * Copyright (c) 2018 LI Zhennan
  *
@@ -5,13 +8,15 @@
  * You may find a license copy in project root.
  */
 
-package etherscan
+package client
 
 import (
 	"fmt"
+	"net/url"
 	"os"
-	"testing"
 	"time"
+
+	"github.com/timcki/etherscan-api/v2/internal/chain"
 )
 
 const apiKeyEnvName = "ETHERSCAN_API_KEY"
@@ -23,18 +28,18 @@ var (
 	bucket *Bucket
 	// apiKey etherscan API key
 	apiKey string
+	ok     bool
 )
 
 func init() {
-	apiKey = os.Getenv(apiKeyEnvName)
-	if apiKey == "" {
+	if apiKey, ok = os.LookupEnv(apiKeyEnvName); !ok {
 		panic(fmt.Sprintf("API key is empty, set env variable %q with a valid API key to proceed.", apiKeyEnvName))
 	}
 	bucket = NewBucket(500 * time.Millisecond)
 
-	api = New(Mainnet, apiKey)
-	api.Verbose = true
-	api.BeforeRequest = func(module string, action string, param map[string]interface{}) error {
+	api = NewClient(chain.EthereumMainnet, apiKey)
+	//api.Verbose = true
+	api.BeforeRequest = func(module string, action string, values url.Values) error {
 		bucket.Take()
 		return nil
 	}
@@ -76,12 +81,5 @@ func (b *Bucket) fillRoutine() {
 
 	for range ticker.C {
 		b.fill()
-	}
-}
-
-// noError checks for testing error
-func noError(t *testing.T, err error, msg string) {
-	if err != nil {
-		t.Fatalf("%s: %v", msg, err)
 	}
 }

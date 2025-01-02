@@ -1,3 +1,6 @@
+//go:build integration
+// +build integration
+
 /*
  * Copyright (c) 2018 LI Zhennan
  *
@@ -5,16 +8,18 @@
  * You may find a license copy in project root.
  */
 
-package etherscan
+package client
 
 import (
 	"math/big"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestClient_EtherTotalSupply(t *testing.T) {
 	totalSupply, err := api.EtherTotalSupply()
-	noError(t, err, "api.EtherTotalSupply")
+	assert.NoError(t, err, "api.EtherTotalSupply")
 
 	if totalSupply.Int().Cmp(big.NewInt(100)) != 1 {
 		t.Errorf("api.EtherTotalSupply not working, totalSupply is %s", totalSupply.Int().String())
@@ -23,7 +28,7 @@ func TestClient_EtherTotalSupply(t *testing.T) {
 
 func TestClient_EtherLatestPrice(t *testing.T) {
 	latest, err := api.EtherLatestPrice()
-	noError(t, err, "api.EtherLatestPrice")
+	assert.NoError(t, err, "api.EtherLatestPrice")
 
 	if latest.ETHBTC == 0 {
 		t.Errorf("ETHBTC got 0")
@@ -41,7 +46,7 @@ func TestClient_EtherLatestPrice(t *testing.T) {
 
 func TestClient_TokenTotalSupply(t *testing.T) {
 	totalSupply, err := api.TokenTotalSupply("0x57d90b64a1a57749b0f932f1a3395792e12e7055")
-	noError(t, err, "api.TokenTotalSupply")
+	assert.NoError(t, err, "api.TokenTotalSupply")
 
 	if totalSupply.Int().Cmp(big.NewInt(100)) != 1 {
 		t.Errorf("api.TokenTotalSupply not working, totalSupply is %s", totalSupply.Int().String())

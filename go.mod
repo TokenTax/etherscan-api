@@ -1,9 +1,8 @@
-module github.com/timcki/etherscan-api
+module github.com/timcki/etherscan-api/v2
 
 go 1.23.0
 
 require (
-	github.com/google/go-cmp v0.5.7
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
 )

@@ -13,21 +13,21 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/pkg/response"
+	"github.com/timcki/etherscan-api/v2/pkg/response"
 )
 
- type GasEstimateParams struct {
+type GasEstimateParams struct {
 	GasPrice int `json:"gasPrice"`
- }
+}
 
- func (p GasEstimateParams) GetUrlValues() url.Values {
+func (p GasEstimateParams) GetUrlValues() url.Values {
 	values := url.Values{}
 	values.Add("gasPrice", strconv.Itoa(p.GasPrice))
 	return values
- }
+}
 
- // GasEstimate gets estimated confirmation time (in seconds) at the given gas price
- func (c *Client) GasEstimate(gasPrice int) (time.Duration, error) {
+// GasEstimate gets estimated confirmation time (in seconds) at the given gas price
+func (c *Client) GasEstimate(gasPrice int) (time.Duration, error) {
 	param := GasEstimateParams{
 		GasPrice: gasPrice,
 	}
@@ -43,13 +43,13 @@ import (
 	}
 
 	return time.ParseDuration(confTime + "s")
- }
+}
 
- // GasOracle gets suggested gas prices (in Gwei)
- func (c *Client) GasOracle() (response.GasPrices, error) {
+// GasOracle gets suggested gas prices (in Gwei)
+func (c *Client) GasOracle() (response.GasPrices, error) {
 	body, err := c.execute("gastracker", "gasoracle", url.Values{})
 	if err != nil {
 		return response.GasPrices{}, errors.Wrap(err, "executing GasOracle request")
 	}
 	return response.ReadResponse[response.GasPrices](body)
- }
+}

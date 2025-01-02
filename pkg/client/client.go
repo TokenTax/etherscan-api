@@ -18,7 +18,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/pkg/chain"
+	"github.com/timcki/etherscan-api/v2/pkg/chain"
 )
 
 type (
@@ -239,6 +239,10 @@ func (c *Client) call(module, action string, values url.Values, outcome interfac
 
 // craftURL returns desired URL via param provided
 func (c *Client) craftURL(module, action string, values url.Values) string {
+	if values == nil {
+		values = url.Values{}
+	}
+
 	values.Add("module", module)
 	values.Add("action", action)
 	values.Add("apikey", c.key)

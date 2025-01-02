@@ -15,7 +15,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/internal/types"
+	"github.com/timcki/etherscan-api/v2/internal/types"
 )
 
 type EtherscanResponse interface {
@@ -32,7 +32,8 @@ type EtherscanResponse interface {
 		LatestPrice | []LatestPrice |
 		Log | []Log |
 		GasPrices | []GasPrices |
-		types.BigInt | types.Time | string
+		StatusReponse | []StatusReponse |
+		types.BigInt | []types.BigInt | types.Time | string
 }
 
 // envelope is the carrier of nearly every response
@@ -64,6 +65,10 @@ func ReadResponse[T EtherscanResponse](content bytes.Buffer) (T, error) {
 type AccountBalance struct {
 	Account string        `json:"account"`
 	Balance *types.BigInt `json:"balance"`
+}
+
+type StatusReponse struct {
+	Status string `json:"status"`
 }
 
 type (
