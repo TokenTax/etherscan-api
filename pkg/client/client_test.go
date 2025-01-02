@@ -8,23 +8,24 @@
 package client
 
 import (
+	"net/url"
 	"testing"
 
-	"github.com/timcki/etherscan-api/internal/types"
+	"github.com/stretchr/testify/assert"
+	"github.com/timcki/etherscan-api/internal/chain"
 )
 
 func TestClient_craftURL(t *testing.T) {
-	c := NewClient(types.Ropsten, "abc123")
+	c := NewClient(chain.EthereumMainnet, "abc123")
 
-	const expected = `https://api-ropsten.etherscan.io/api?action=craftURL&apikey=abc123&four=d&four=e&four=f&module=testing&one=1&three=1&three=2&three=3&two=2`
-	output := c.craftURL("testing", "craftURL", M{
-		"one":   1,
-		"two":   "2",
-		"three": []int{1, 2, 3},
+	const expected = `https://api.etherscan.io/v2/api?action=craftURL&apikey=abc123&chainid=1&four=d&four=e&four=f&module=testing&one=1&three=1&three=2&three=3&two=2`
+
+	output := c.craftURL("testing", "craftURL", url.Values{
+		"one":   []string{"1"},
+		"two":   []string{"2"},
+		"three": []string{"1", "2", "3"},
 		"four":  []string{"d", "e", "f"},
 	})
 
-	if output != expected {
-		t.Fatalf("output != expected, got %s, want %s", output, expected)
-	}
+	assert.Equal(t, expected, output)
 }

@@ -14,10 +14,11 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/internal/network"
+	"github.com/timcki/etherscan-api/internal/chain"
 )
 
 type (
@@ -27,7 +28,7 @@ type (
 		conn    *http.Client
 		key     string
 		baseURL string
-		chainID string
+		chain   chain.Chain
 
 		// Verbose when true, talks a lot
 		Verbose bool
@@ -51,6 +52,8 @@ type (
 		BaseURL string
 		// When true, talks a lot
 		Verbose bool
+		// ChainID to be used
+		Chain chain.Chain
 		// HTTP Client to be used. Specifying this value will ignore the Timeout value set
 		// Set your own timeout.
 		Client *http.Client
@@ -67,11 +70,12 @@ type (
 
 // NewClient initialize a new etherscan API client
 // please use pre-defined network value
-func NewClient(network network.Network, APIKey string) *Client {
+func NewClient(chain chain.Chain, APIKey string) *Client {
 	return NewCustomized(Customization{
 		Timeout: 30 * time.Second,
 		Key:     APIKey,
-		BaseURL: fmt.Sprintf(`https://%s.etherscan.io/api`, network.SubDomain()),
+		Chain:   chain,
+		BaseURL: `https://api.etherscan.io/v2/api`,
 	})
 }
 
@@ -87,6 +91,7 @@ func NewCustomized(config Customization) *Client {
 	return &Client{
 		conn:          httpClient,
 		key:           config.Key,
+		chain:         config.Chain,
 		baseURL:       config.BaseURL,
 		Verbose:       config.Verbose,
 		BeforeRequest: config.BeforeRequest,
@@ -237,7 +242,7 @@ func (c *Client) craftURL(module, action string, values url.Values) string {
 	values.Add("module", module)
 	values.Add("action", action)
 	values.Add("apikey", c.key)
-	values.Add("chainid", c.chainID)
+	values.Add("chainid", strconv.Itoa(c.chain.ChainID()))
 
 	return fmt.Sprintf("%s?%s", c.baseURL, values.Encode())
 }
