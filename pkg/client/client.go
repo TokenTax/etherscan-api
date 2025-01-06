@@ -18,7 +18,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/internal/chain"
+	"github.com/timcki/etherscan-api/pkg/chain"
 )
 
 type (
