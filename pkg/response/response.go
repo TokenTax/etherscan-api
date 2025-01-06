@@ -46,11 +46,21 @@ type envelope[T EtherscanResponse] struct {
 	Result T `json:"result"`
 }
 
+type statusEnvelope struct {
+	Status int `json:"status,string"`
+}
+
 func ReadResponse[T EtherscanResponse](content bytes.Buffer) (T, error) {
 	var ret T
 
 	var envelope envelope[T]
 	if err := json.Unmarshal(content.Bytes(), &envelope); err != nil {
+		var statusEnv statusEnvelope
+		if err := json.Unmarshal(content.Bytes(), &statusEnv); err == nil {
+			if statusEnv.Status != 1 {
+				return ret, errors.Errorf("unmarshaling response into %T; message=%s", ret, envelope.Message)
+			}
+		}
 		return ret, errors.Wrapf(err, "unmarshaling etherscan response; body=%s", content.Bytes())
 	}
 	if envelope.Status != 1 {
@@ -58,7 +68,6 @@ func ReadResponse[T EtherscanResponse](content bytes.Buffer) (T, error) {
 	}
 
 	return envelope.Result, nil
-
 }
 
 // AccountBalance account and its balance in pair

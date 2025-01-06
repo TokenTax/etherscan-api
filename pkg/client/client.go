@@ -246,7 +246,7 @@ func (c *Client) craftURL(module, action string, values url.Values) string {
 	values.Add("module", module)
 	values.Add("action", action)
 	values.Add("apikey", c.key)
-	values.Add("chainid", strconv.Itoa(c.chain.ChainID()))
+	values.Add("chainid", strconv.Itoa(c.chain.ID()))
 
 	return fmt.Sprintf("%s?%s", c.baseURL, values.Encode())
 }

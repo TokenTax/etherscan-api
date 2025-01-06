@@ -142,10 +142,8 @@ func (n Chain) String() string {
 	return "Unknown Network"
 }
 
-// ChainID returns the chain ID as a uint64
-func (n Chain) ChainID() int {
-	return int(n)
-}
+// ID returns the chain ID as an int
+func (n Chain) ID() int { return int(n) }
 
 // NewNetwork creates a Network from a name and chain ID
 func NewNetwork(name string, chainID int) Chain {
