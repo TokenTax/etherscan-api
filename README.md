@@ -1,47 +1,46 @@
-**English** | [中文](https://github.com/nanmu42/etherscan-api/blob/master/README_ZH.md)
-
 # etherscan-api
 
-[![GoDoc](https://godoc.org/github.com/nanmu42/etherscan-api?status.svg)](https://godoc.org/github.com/nanmu42/etherscan-api)
-[![CI status](https://github.com/nanmu42/etherscan-api/actions/workflows/ci.yaml/badge.svg)](https://github.com/nanmu42/etherscan-api/actions)
-[![codecov](https://codecov.io/gh/nanmu42/etherscan-api/branch/master/graph/badge.svg)](https://codecov.io/gh/nanmu42/etherscan-api)
-[![Go Report Card](https://goreportcard.com/badge/github.com/nanmu42/etherscan-api)](https://goreportcard.com/report/github.com/nanmu42/etherscan-api)
+[![GoDoc](https://godoc.org/github.com/timcki/etherscan-api/v2?status.svg)](https://godoc.org/github.com/timcki/etherscan-api)
 
-Golang client for the Etherscan.io API(and its families like BscScan), with nearly full implementation(accounts, transactions, tokens, contracts, blocks, stats), full network support(Mainnet, Ropsten, Kovan, Rinkby, Goerli, Tobalaba), and only depending on standard library. :wink:
+Golang client for the Etherscan.io v2 API with nearly full implementation(accounts, transactions, tokens, contracts, blocks, stats) and minimal dependencies.
 
 # Usage
 
 ```bash
-go get github.com/nanmu42/etherscan-api
+go get github.com/timcki/etherscan-api/v2
 ```
 
 Create an API instance and off you go. :rocket:
 
 ```go
 import (
-	"github.com/nanmu42/etherscan-api"
+	"github.com/nanmu42/etherscan-api/v2/pkg/client"
+	"github.com/nanmu42/etherscan-api/v2/pkg/chain"
 	"fmt"
 )
 
 func main() {
 	// create a API client for specified ethereum net
 	// there are many pre-defined network in package
-	client := etherscan.New(etherscan.Mainnet, "[your API key]")
-	
-	// or, if you are working with etherscan-family API like BscScan
+	client := client.NewClient(chain.EthereumMainnet, "[your API key]")
+
+	// or, if you are working with antoher chain
+	// client := client.NewClient(chain.OpMainnet, "[your API key]")
 	//
+	// or more customized
 	// client := etherscan.NewCustomized(etherscan.Customization{
 	// Timeout:       15 * time.Second,
 	// Key:           "You key here",
-	// BaseURL:       "https://api.bscscan.com/api?",
+	// Chain:         chain.NewChain(<chain number>),
+	// BaseURL:       "<whatever thid-party api provider>",
 	// Verbose:       false,
 	// })
 
 	// (optional) add hooks, e.g. for rate limit
-	client.BeforeRequest = func(module, action string, param map[string]interface{}) error {
+	client.BeforeRequest = func(module, action string, values url.Values) error {
 		// ...
 	}
-	client.AfterRequest = func(module, action string, param map[string]interface{}, outcome interface{}, requestErr error) {
+	client.AfterRequest = func(module, action string, values url.Values, outcome interface{}, requestErr error) error {
 		// ...
 	}
 
@@ -61,20 +60,18 @@ func main() {
 }
 ```
 
-You may find full method list at [GoDoc](https://godoc.org/github.com/nanmu42/etherscan-api).
+You may find full method list at [GoDoc](https://godoc.org/github.com/timcki/etherscan-api/v2).
 
 # Etherscan API Key
 
 You may apply for an API key on [etherscan](https://etherscan.io/apis).
 
-> The Etherscan Ethereum Developer APIs are provided as a community service and without warranty, so please just use what you need and no more. They support both GET/POST requests and a rate limit of 5 requests/sec (exceed and you will be blocked). 
+> The Etherscan Ethereum Developer APIs are provided as a community service and without warranty, so please just use what you need and no more. They support both GET/POST requests and a rate limit of 5 requests/sec (exceed and you will be blocked).
 
 # Paperwork Things
 
-I am not from Etherscan and I just find their service really useful, so I implement this. :smile:
+This library is not affiliated with Etherscan.io, it's developed for internal use in TokenTax.
 
 # License
 
 Use of this work is governed by an MIT License.
-
-You may find a license copy in project root.
