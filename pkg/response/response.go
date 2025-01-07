@@ -14,8 +14,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/TokenTax/etherscan-api/v2/internal/types"
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/v2/internal/types"
 )
 
 type EtherscanResponse interface {

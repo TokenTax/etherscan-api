@@ -10,8 +10,8 @@ package client
 import (
 	"net/url"
 
+	"github.com/TokenTax/etherscan-api/v2/pkg/response"
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/v2/pkg/response"
 )
 
 type ContractParams struct {

@@ -1,13 +1,13 @@
 # etherscan-api
 
-[![GoDoc](https://godoc.org/github.com/timcki/etherscan-api/v2?status.svg)](https://godoc.org/github.com/timcki/etherscan-api)
+[![GoDoc](https://godoc.org/github.com/TokenTax/etherscan-api/v2?status.svg)](https://godoc.org/github.com/TokenTax/etherscan-api)
 
 Golang client for the Etherscan.io v2 API with nearly full implementation(accounts, transactions, tokens, contracts, blocks, stats) and minimal dependencies.
 
 # Usage
 
 ```bash
-go get github.com/timcki/etherscan-api/v2
+go get github.com/TokenTax/etherscan-api/v2
 ```
 
 Create an API instance and off you go. :rocket:
@@ -60,7 +60,7 @@ func main() {
 }
 ```
 
-You may find full method list at [GoDoc](https://godoc.org/github.com/timcki/etherscan-api/v2).
+You may find full method list at [GoDoc](https://godoc.org/github.com/TokenTax/etherscan-api/v2).
 
 # Etherscan API Key
 

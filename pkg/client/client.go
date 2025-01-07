@@ -17,8 +17,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/TokenTax/etherscan-api/v2/pkg/chain"
 	"github.com/pkg/errors"
-	"github.com/timcki/etherscan-api/v2/pkg/chain"
 )
 
 type (

@@ -6,8 +6,8 @@ package client
 import (
 	"testing"
 
+	"github.com/TokenTax/etherscan-api/v2/pkg/response"
 	"github.com/stretchr/testify/assert"
-	"github.com/timcki/etherscan-api/v2/pkg/response"
 )
 
 func TestClient_GetLogs(t *testing.T) {

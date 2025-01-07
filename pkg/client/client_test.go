@@ -11,8 +11,8 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/TokenTax/etherscan-api/v2/pkg/chain"
 	"github.com/stretchr/testify/assert"
-	"github.com/timcki/etherscan-api/v2/pkg/chain"
 )
 
 func TestClient_craftURL(t *testing.T) {
