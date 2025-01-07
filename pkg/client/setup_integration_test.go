@@ -16,7 +16,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/TokenTax/etherscan-api/v2/internal/chain"
+	"github.com/TokenTax/etherscan-api/v2/pkg/chain"
 )
 
 const apiKeyEnvName = "ETHERSCAN_API_KEY"
