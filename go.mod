@@ -1,4 +1,4 @@
-module github.com/timcki/etherscan-api/v2
+module github.com/TokenTax/etherscan-api/v2
 
 go 1.23.0
 
