@@ -14,8 +14,8 @@ Create an API instance and off you go. :rocket:
 
 ```go
 import (
-	"github.com/nanmu42/etherscan-api/v2/pkg/client"
-	"github.com/nanmu42/etherscan-api/v2/pkg/chain"
+	"github.com/TokenTax/etherscan-api/v2/pkg/client"
+	"github.com/TokenTax/etherscan-api/v2/pkg/chain"
 	"fmt"
 )
 
